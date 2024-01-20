@@ -256,7 +256,7 @@ class FieldMapper:
 
     def upload_to_mongodb(self, database_name, collection_name):
         try:
-            client = MongoClient('mongodb://localhost:27017/')  # Replace with your MongoDB connection string
+            client = MongoClient('mongodb+srv://lalsharath511:Sharathbhagavan15192142@legal.mosm3f4.mongodb.net/')  # Replace with your MongoDB connection string
             db = client[database_name]
             collection = db[collection_name]
             collection.insert_many(self.item)
@@ -264,19 +264,19 @@ class FieldMapper:
         except Exception as e:
             raise RuntimeError(f"Error uploading to MongoDB: {str(e)}")
 
-def main():
-    try:
-        file_path = 'Untitled spreadsheet.xlsx'  # Replace with the actual file path
-        mapper = FieldMapper(file_path)
-        df = mapper.read_file()
-        mapper.detect_source(df)
-        mapper.map_fields(df)
+# def main():
+#     try:
+#         file_path = 'Untitled spreadsheet.xlsx'  # Replace with the actual file path
+#         mapper = FieldMapper(file_path)
+#         df = mapper.read_file()
+#         mapper.detect_source(df)
+#         mapper.map_fields(df)
         
 
-        mapper.upload_to_mongodb('newclient', 'test')
-        print("Data uploaded to MongoDB successfully.")
-    except RuntimeError as e:
-        print(f"Error: {str(e)}")
+#         mapper.upload_to_mongodb('newclient', 'test')
+#         print("Data uploaded to MongoDB successfully.")
+#     except RuntimeError as e:
+#         print(f"Error: {str(e)}")
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

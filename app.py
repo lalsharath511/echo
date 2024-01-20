@@ -38,7 +38,7 @@ def upload_file():
                 mapper = FieldMapper(None)  # Pass None for file_path
                 mapper.detect_source(df)
                 mapper.map_fields(df)
-                mapper.upload_to_mongodb('newclient', 'test')
+                mapper.upload_to_mongodb('echo', 'transform_data')
                 result = "Data uploaded to MongoDB successfully."
                 download_link = True
             except RuntimeError as e:
@@ -52,9 +52,9 @@ def upload_file():
 def download_data():
     try:
         # Retrieve all data from MongoDB collection
-        client = MongoClient('mongodb://localhost:27017/')
-        db = client['newclient']
-        collection = db['test']
+        client = MongoClient('mongodb+srv://lalsharath511:Sharathbhagavan15192142@legal.mosm3f4.mongodb.net/')
+        db = client['echo']
+        collection = db['transform_data']
         data_cursor = collection.find()
         data_list = list(data_cursor)
 
