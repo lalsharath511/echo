@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>File Upload and Processing</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    input[type="file"] {
+      padding: 10px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    input[type="submit"] {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    p {
+      margin-top: 20px;
+      color: #333;
+    }
+
+    p.error {
+      color: red;
+    }
+
+    hr {
+      margin-top: 20px;
+    }
+
+    input[type="submit"].download {
+      background-color: #008CBA;
+    }
+  </style>
+</head>
+<body>
+  <h1>File Upload and Processing</h1>
+  <form method="post" enctype="multipart/form-data" action="/">
+    <input type="file" name="file" accept=".xlsx, .csv">
+    <input type="submit" value="Upload and Process">
+  </form>
+  
+  {% if result %}
+    <p>{{ result }}</p>
+  {% endif %}
+  
+  {% if error %}
+    <p class="error">{{ error }}</p>
+  {% endif %}
+
+  <hr>
+
+  {% if download_link %}
+    <form method="get" action="/download_data">
+      <input type="submit" class="download" value="Download Data">
+    </form>
+  {% endif %}
+</body>
+</html>
