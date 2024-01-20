@@ -72,3 +72,5 @@ def download_data():
         return f"Error: {str(e)}"
 
 
+if __name__ == '__main__':
+    app.run(debug=False)
