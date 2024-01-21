@@ -142,6 +142,7 @@ from dotenv import load_dotenv
 import jwt
 from datetime import datetime, timedelta
 import logging
+import sys
 from etl import FieldMapper
 from pipelines import MongoDBConnector
 
