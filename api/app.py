@@ -142,10 +142,10 @@ from dotenv import load_dotenv
 import jwt
 from datetime import datetime, timedelta
 import logging
-import sys
-sys.path.append(".")
-from extract_transfer_load import FieldMapper
-from pipelines import MongoDBConnector
+# import sys
+# sys.path.append(".")
+from api.extract_transfer_load import FieldMapper
+from api.pipelines import MongoDBConnector
 
 load_dotenv()
 
