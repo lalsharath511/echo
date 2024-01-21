@@ -143,7 +143,8 @@ import jwt
 from datetime import datetime, timedelta
 import logging
 import sys
-from etl import FieldMapper
+sys.path.append(".")
+from extract_transfer_load import FieldMapper
 from pipelines import MongoDBConnector
 
 load_dotenv()
