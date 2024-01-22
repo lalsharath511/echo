@@ -23,30 +23,27 @@ class MongoDBConnector:
         metadata_id = metadata_collection.insert_one(metadata).inserted_id
         return metadata_id
     def upload_elt_to_mongo(self,data,filename):
-        try:
-            metadata_id=self.upload_metadata(filename,len(data))
-            updated_data = [{**item, "metadata_id": metadata_id} for item in data]
-            collection = self.db["transform_data"]
-            duplicate_collection = self.db["duplicate_data"]
-            collection.create_index("Link", unique=True)
+        collection = self.db["transform_data"]
+        duplicate_collection = self.db["duplicate_data"]
 
-            try:
-                # Try to insert the data into the main collection
-                collection.insert_many(updated_data)
-            except errors.DuplicateKeyError as e:
-                # Handle the duplicate key violation
-                print(f"Duplicate key violation: {e.details}")
-                
-                # Extract the duplicate document from the error details
-                duplicate_document = e.details.get("op", None)
-                
-                if duplicate_document:
-                    # Insert the duplicate document into the duplicate collection
-                    duplicate_collection.insert_one(duplicate_document)
-            
-            # print(self.item[1])
+        # Create a unique index on the "Link" field (assuming "Link" is the unique field)
+        collection.create_index("Link", unique=True)
+
+        try:
+            metadata_id = self.upload_metadata(filename, len(data))
+            updated_data = [{**item, "metadata_id": metadata_id} for item in data]
+
+            # Use insert_many for bulk insert
+            collection.insert_many(updated_data, ordered=False)
+        except errors.BulkWriteError as bwe:
+            for error in bwe.details['writeErrors']:
+                if error['code'] == 11000:  # Duplicate key error code
+                    duplicate_collection.insert_one(updated_data[error['index']])
+                else:
+                    raise RuntimeError(f"Error uploading to MongoDB: {str(bwe)}")
         except Exception as e:
-            raise RuntimeError(f"Error uploading to MongoDB: {str(e)}")
+            raise RuntimeError(f"Error uploading to MongoDB: {str(e)}")     
+
 
 
     def close_connection(self):
