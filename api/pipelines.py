@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from datetime import datetime
+from pymongo import errors
 
 class MongoDBConnector:
     def __init__(self):
@@ -26,7 +27,22 @@ class MongoDBConnector:
             metadata_id=self.upload_metadata(filename,len(data))
             updated_data = [{**item, "metadata_id": metadata_id} for item in data]
             collection = self.db["transform_data"]
-            collection.insert_many(updated_data)
+            duplicate_collection = self.db["duplicate_data"]
+            collection.create_index("Link", unique=True)
+
+            try:
+                # Try to insert the data into the main collection
+                collection.insert_many(updated_data)
+            except errors.DuplicateKeyError as e:
+                # Handle the duplicate key violation
+                print(f"Duplicate key violation: {e.details}")
+                
+                # Extract the duplicate document from the error details
+                duplicate_document = e.details.get("op", None)
+                
+                if duplicate_document:
+                    # Insert the duplicate document into the duplicate collection
+                    duplicate_collection.insert_one(duplicate_document)
             
             # print(self.item[1])
         except Exception as e:
