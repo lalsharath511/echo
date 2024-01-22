@@ -233,7 +233,7 @@ class FieldMapper:
                         'Message': data['message'],
                         'Link': data['post_link'],
                         'Docu_Link':data['link'],
-                        'Image':data['Image'],
+                        'Image':data['image'],
                         'Post Type': post_type,
                         'Like / applause': data['applause'],
                         'Comment / conversation': data['conversation'],
