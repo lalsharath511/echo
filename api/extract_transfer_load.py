@@ -148,6 +148,7 @@
 import pandas as pd
 from datetime import datetime
 from dateutil import parser
+import math
 
 from api.settings import *
 
@@ -223,7 +224,7 @@ class FieldMapper:
                     original_datetime = self.format_timestamp_auto(data['published_at'])
                     post_type = "Image" if data['post_type'].lower() == "photo" else "Video" if "video (linkedin source)" in data['post_type'].lower() else data['post_type'].capitalize()
                     Handle_Name=str(data['presence_handle']).capitalize() if data['presence_handle'] else ""
-                    Message= data['message'] if data['message'] else data['link_title']
+                    message = data['message'] if not (isinstance(data['message'], float) and math.isnan(data['message'])) else data['link_title']
                     Handle_Name=YOUTUBE_MAPPING[company_name] if data['channel'] == "YouTube" else Handle_Name
                         
                                     
@@ -232,7 +233,7 @@ class FieldMapper:
                         'Company Name':company_name ,
                         'Social Media Channel': data['channel'],
                         'Handle Name': Handle_Name,
-                        'Message': Message,
+                        'Message': message,
                         'Link': data['post_link'],
                         'Docu_Link':data['link'],
                         'Image':data['image'],
