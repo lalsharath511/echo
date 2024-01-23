@@ -4,6 +4,7 @@ COMPANY_MAPPING = {
         'tata-group': 'Tata Group',
         'tata group': 'Tata Group',
         'unilever': 'Unilever Global',
+        'unilever global':'Unilever Global',
         'nestle-s-a-': 'Nestle Global',
         'nestlé global': 'Nestle Global',
         'aditya-birla-group': 'Aditya Birla Group',
