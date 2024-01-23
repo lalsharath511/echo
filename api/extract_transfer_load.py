@@ -223,14 +223,16 @@ class FieldMapper:
                     original_datetime = self.format_timestamp_auto(data['published_at'])
                     post_type = "Image" if data['post_type'].lower() == "photo" else "Video" if "video (linkedin source)" in data['post_type'].lower() else data['post_type'].capitalize()
                     Handle_Name=str(data['presence_handle']).capitalize() if data['presence_handle'] else ""
+                    Message= data['message'] if data['message'] else data['link_title']
+                    Handle_Name=YOUTUBE_MAPPING[company_name] if data['channel'] == "YouTube" else Handle_Name
                         
-                    
+                                    
                     self.field_mapping = {
                         'Publish Date / Time':original_datetime,
                         'Company Name':company_name ,
                         'Social Media Channel': data['channel'],
                         'Handle Name': Handle_Name,
-                        'Message': data['message'],
+                        'Message': Message,
                         'Link': data['post_link'],
                         'Docu_Link':data['link'],
                         'Image':data['image'],

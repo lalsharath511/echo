@@ -1,6 +1,6 @@
 COMPANY_MAPPING = {
-        'reliance': 'Reliance Industries Limited',
-        'reliance industries': 'Reliance Industries Limited',
+        'reliance': 'Reliance Industries',
+        'reliance industries': 'Reliance Industries',
         'tata-group': 'Tata Group',
         'tata group': 'Tata Group',
         'unilever': 'Unilever Global',
@@ -11,13 +11,22 @@ COMPANY_MAPPING = {
         'maricolimited': 'Marico',
         'marico': 'Marico',
         'hul': 'HUL',
-        'mahindragroup': 'Mahindra Group',
+        'mahindragroup': 'Mahindra & Mahindra',
         'mahindra & mahindra': 'Mahindra & Mahindra',
         'itc-limited': 'ITC Limited',
         'https://www.loreal.com/en/india/': 'ITC Limited',
         'mondelezinternational': 'Mondelez International',
         'mondelez international': 'Mondelez International'
 }
+YOUTUBE_MAPPING={
+  "Mahindra & Mahindra": "MahindraRise",
+  "Marico": "Marico",
+  "Mondelez International": "Mondelez International",
+  "Reliance Industries": "RelianceUpdates",
+  "Tata Group": "TataCompanies",
+  "Unilever Global": "Unilever Global"
+}
+
 
 RIVAL_IQ = [
                 "published_at", "report_generated_at", "captured_at", "company", "channel",
