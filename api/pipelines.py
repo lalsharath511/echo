@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from datetime import datetime
 from pymongo import errors
+import pytz
 
 class MongoDBConnector:
     def __init__(self):
@@ -10,11 +11,22 @@ class MongoDBConnector:
         self.db = self.client[self.database_name]
         
     def upload_metadata(self, file_name, len_df):
+        current_utc_time = datetime.utcnow()
+
+        # Define UTC and IST time zones
+        utc_timezone = pytz.timezone('UTC')
+        ist_timezone = pytz.timezone('Asia/Kolkata')
+
+        # Convert current time to IST
+        ist_time = utc_timezone.localize(current_utc_time).astimezone(ist_timezone)
+
+        # Format the IST time as 'HH:MM:SS'
+        ist_time_str = ist_time.strftime('%H:%M:%S')
         # Generate metadata for the uploaded file
         metadata = {
             'file_name': file_name,
             'upload_date': datetime.utcnow().strftime('%d-%m-%Y'),
-            'upload_time': datetime.utcnow().strftime('%H:%M:%S'),
+            'upload_time': ist_time_str,
             'total_data_count': len_df,
         }
 
