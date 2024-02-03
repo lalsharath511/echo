@@ -7,4 +7,3 @@ python-dotenv
 jwt
 etl
 pytz
-scikit-learn==0.24.2
