@@ -7,3 +7,4 @@ python-dotenv
 jwt
 etl
 pytz
+sklearn
