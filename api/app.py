@@ -249,30 +249,36 @@ def upload_file():
 
     return render_template('index.html', download_link=download_link)
 
-@app.route('/handle_post_request', methods=['POST'])
-def handle_post_request():
-    try:
-        # data = request.get_json()
-        data_processor = DataProcessor()
-        text_classifier = TextClassifier()
-        entity_processor = EntityProcessor()
-        new_data = data_processor.fetch_data_from_mongo(collection_name='transform_data')
-        new_data['transform_data_id'] = new_data['_id']
-        new_data = new_data.drop('_id', axis=1, errors='ignore')
-        new_data['Message'] = new_data['Message'].apply(text_classifier.clean_text)
-        # new_data = new_data.apply(data_processor.apply_keyword_matching, axis=1)
-        # model=text_classifier.load_model(file_path="model/model_q2.pkl")
-        df1=data_processor.predict_labels(new_data)
-        processed_df = entity_processor.process_entities(df=df1)
-        # Do something with the incoming JSON data
-        json_response = processed_df.to_json(orient='records')
-        response_data = {'data': json_response}
+@app.route('/handle_post_request', methods=['POST', 'GET'])
+def handle_request():
+    if request.method == 'POST':
+        try:
+            data_processor = DataProcessor()
+            text_classifier = TextClassifier()
+            entity_processor = EntityProcessor()
+            
+            new_data = data_processor.fetch_data_from_mongo(collection_name='transform_data')
+            new_data['transform_data_id'] = new_data['_id']
+            new_data = new_data.drop('_id', axis=1, errors='ignore')
+            new_data['Message'] = new_data['Message'].apply(text_classifier.clean_text)
+            
+            df1 = data_processor.predict_labels(new_data)
+            processed_df = entity_processor.process_entities(df=df1)
+            
+            # Convert processed DataFrame to JSON
+            json_response = processed_df.to_json(orient='records')
+            response_data = {'data': json_response}
+            
             # Respond with the JSON representation of the DataFrame
-        return jsonify(response_data)
+            return jsonify(response_data)
 
-    except Exception as e:
-        error_message = f'Error: {str(e)}'
-        return jsonify({'error': error_message}), 500
+        except Exception as e:
+            error_message = f'Error: {str(e)}'
+            return jsonify({'error': error_message}), 500
+
+    elif request.method == 'GET':
+        # Handle GET request
+        return jsonify({'message': 'hello world'})
 
 @app.route('/download_data', methods=['GET'])
 def download_data():
