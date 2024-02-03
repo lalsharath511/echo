@@ -3,12 +3,12 @@ import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 class EntityProcessor:
     def __init__(self):
-        openai.api_key = "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"
+        openai.api_key = "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"
         self.entity_types = ["Person Names", "Organization", "Hash Tags", "Location", "Brand", "Category", "URLs"]
 
     def extract_entities(self, message):
         try:
-            print(message)
+            # print(message)
             # Use the OpenAI API to perform zero-shot NER on the message
             prompt = f"Please extract the following entity types from the text: {', '.join(self.entity_types)}. \n\nText: {message}"
             response = openai.Completion.create(

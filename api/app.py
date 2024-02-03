@@ -149,6 +149,7 @@ from api.extract_transfer_load import FieldMapper
 from api.pipelines import MongoDBConnector
 from api.data_processor import *
 from api.text_classifier import *
+from pymongo import MongoClient
 from api.entityprocessor import *
 
 
@@ -252,23 +253,26 @@ def upload_file():
 @app.route('/handle_post_request', methods=['POST'])
 def handle_post_request():
     try:
-        # data = request.get_json()
-        data_processor = DataProcessor()
-        text_classifier = TextClassifier()
-        entity_processor = EntityProcessor()
-        new_data = data_processor.fetch_data_from_mongo(collection_name='transform_data')
-        new_data['transform_data_id'] = new_data['_id']
-        new_data = new_data.drop('_id', axis=1, errors='ignore')
-        new_data['Message'] = new_data['Message'].apply(text_classifier.clean_text)
-        # new_data = new_data.apply(data_processor.apply_keyword_matching, axis=1)
-        # model=text_classifier.load_model(file_path="model/model_q2.pkl")
-        df1=data_processor.predict_labels(new_data)
-        processed_df = entity_processor.process_entities(df=df1)
-        # Do something with the incoming JSON data
-        json_response = processed_df.to_json(orient='records')
-        response_data = {'data': json_response}
-            # Respond with the JSON representation of the DataFrame
-        return jsonify(json_response)
+        
+
+        # Connect to MongoDB
+        client = MongoClient('mongodb+srv://lalsharath511:Sharathbhagavan15192142@legal.mosm3f4.mongodb.net/')
+        db = client['echo']  # Replace 'your_database' with your actual database name
+        collection = db['output']  # Replace 'your_collection' with your actual collection name
+
+        # Retrieve all documents from the collection
+        cursor = collection.find()
+
+        # Convert the documents to a list of dictionaries (JSON format)
+        result_list = [{**doc, '_id': str(doc['_id'])} for doc in cursor]
+
+        # Close the MongoDB connection
+        client.close()
+
+        # Now, result_list contains all the documents with ObjectId converted to string
+        response_data = {'data': result_list}
+        return jsonify(response_data)
+
 
     except Exception as e:
         error_message = f'Error: {str(e)}'
