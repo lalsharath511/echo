@@ -29,7 +29,7 @@ class DataProcessor:
         return None, None, None
     
     def predict_labels(self, new_data):
-        with open("model_q2.pkl", 'rb') as model_file:
+        with open(r"api/model_q2.pkl", 'rb') as model_file:
             model_bytes = model_file.read()
         # Load the model from the bytes
         model = pickle.loads(model_bytes)
