@@ -135,7 +135,7 @@
 # #     app.run(host='0.0.0.0', port=5000)
 
 
-from flask import Flask, render_template, request, send_file, g
+from flask import Flask, render_template, request, send_file, g,jsonify
 from io import BytesIO
 import pandas as pd
 from dotenv import load_dotenv
@@ -144,8 +144,13 @@ from datetime import datetime, timedelta
 import logging
 # import sys
 # sys.path.append(".")
+import pandas as pd
 from api.extract_transfer_load import FieldMapper
 from api.pipelines import MongoDBConnector
+from api.data_processor import *
+from api.text_classifier import *
+from api.entityprocessor import *
+
 
 load_dotenv()
 
@@ -243,6 +248,31 @@ def upload_file():
             return render_template('index.html', result=result, download_link=download_link)
 
     return render_template('index.html', download_link=download_link)
+
+@app.route('/handle_post_request', methods=['POST'])
+def handle_post_request():
+    try:
+        # data = request.get_json()
+        data_processor = DataProcessor()
+        text_classifier = TextClassifier()
+        entity_processor = EntityProcessor()
+        new_data = data_processor.fetch_data_from_mongo(collection_name='transform_data')
+        new_data['transform_data_id'] = new_data['_id']
+        new_data = new_data.drop('_id', axis=1, errors='ignore')
+        new_data['Message'] = new_data['Message'].apply(text_classifier.clean_text)
+        # new_data = new_data.apply(data_processor.apply_keyword_matching, axis=1)
+        # model=text_classifier.load_model(file_path="model/model_q2.pkl")
+        df1=data_processor.predict_labels(new_data)
+        processed_df = entity_processor.process_entities(df=df1)
+        # Do something with the incoming JSON data
+        json_response = processed_df.to_json(orient='records')
+        response_data = {'data': json_response}
+            # Respond with the JSON representation of the DataFrame
+        return jsonify(response_data)
+
+    except Exception as e:
+        error_message = f'Error: {str(e)}'
+        return jsonify({'error': error_message}), 500
 
 @app.route('/download_data', methods=['GET'])
 def download_data():

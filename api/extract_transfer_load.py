@@ -172,27 +172,30 @@ class FieldMapper:
             raise RuntimeError(f"Error reading file: {str(e)}")
     def format_timestamp_auto(self, input_timestamp_str):
         try:
-            possible_formats = ["%Y-%m-%dT%H:%M:%S.%fZ", "%m/%d/%Y %H:%M", "%m/%d/%Y %H:%M:%S"]
+            # Check if input_timestamp_str is a valid string and not "nan"
+            if isinstance(input_timestamp_str, str) and input_timestamp_str.lower() != "nan":
 
-            for timestamp_format in possible_formats:
-                try:
-                    dt_object = datetime.strptime(input_timestamp_str, timestamp_format)
-                    formatted_timestamp = dt_object.strftime("%d-%m-%Y %H:%M:%S")
-                    return formatted_timestamp
+                # Attempt to parse with different formats
+                possible_formats = ["%Y-%m-%dT%H:%M:%S.%fZ", "%m/%d/%Y %H:%M", "%m/%d/%Y %H:%M:%S"]
 
-                except ValueError:
-                    continue
+                for timestamp_format in possible_formats:
+                    try:
+                        dt_object = datetime.strptime(input_timestamp_str, timestamp_format)
+                        formatted_timestamp = dt_object.strftime("%d-%m-%Y %H:%M:%S")
+                        return formatted_timestamp
+                    except ValueError:
+                        continue
 
-            raise ValueError("Unable to determine timestamp format")
-
-        except Exception as e:
-            try:
-                dt_object = parser.parse(str(input_timestamp_str))
+                # If none of the known formats work, try using dateutil.parser
+                dt_object = parser.parse(input_timestamp_str)
                 formatted_timestamp = dt_object.strftime("%d-%m-%Y %H:%M:%S")
                 return formatted_timestamp
+            else:
+                return None
+                
 
-            except ValueError:
-                raise ValueError("Unable to determine timestamp format with datetime and dateutil.parser")
+        except ValueError as e:
+            raise ValueError("Unable to determine timestamp format: {}".format(str(e)))
 
 
 
