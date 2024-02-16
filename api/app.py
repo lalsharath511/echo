@@ -147,10 +147,10 @@ import logging
 import pandas as pd
 from api.extract_transfer_load import FieldMapper
 from api.pipelines import MongoDBConnector
-from api.data_processor import *
-from api.text_classifier import *
+#from api.data_processor import *
+#from api.text_classifier import *
 from pymongo import MongoClient
-from api.entityprocessor import *
+#from api.entityprocessor import *
 
 
 load_dotenv()
