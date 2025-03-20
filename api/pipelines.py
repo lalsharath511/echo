@@ -18,6 +18,7 @@ class MongoDBConnector:
         utc_timezone = pytz.timezone('UTC')
         ist_timezone = pytz.timezone('Asia/Kolkata')
 
+
         # Convert current time to IST
         ist_time = utc_timezone.localize(current_utc_time).astimezone(ist_timezone)
 
