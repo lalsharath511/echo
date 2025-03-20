@@ -2,15 +2,26 @@
   "version": 2,
   "builds": [
     {
-      "src": "./index.py",
+      "src": "index.py",
       "use": "@vercel/python",
-      "config":{"runtime":"python3.11.7"}
+      "config": {
+        "runtime": "python3.11",
+        "maxLambdaSize": "50mb",
+        "includeFiles": ["python_packages/**"]
+      }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/"
+      "dest": "/index.py"
     }
-  ]
+  ],
+  "build": {
+    "env": {
+      "PIP_NO_CACHE_DIR": "off",
+      "PIP_DISABLE_PIP_VERSION_CHECK": "1",
+      "PIP_DEFAULT_TIMEOUT": "100"
+    }
+  }
 }
