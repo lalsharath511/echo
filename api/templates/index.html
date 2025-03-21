@@ -4,15 +4,36 @@
   <meta charset="utf-8">
   <title>File Upload and Processing</title>
   <style>
+    /* General Styles */
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-
-    h1 {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       color: #333;
     }
 
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    /* Form Styles */
     form {
       margin-top: 20px;
     }
@@ -23,6 +44,8 @@
       border: 1px solid #ccc;
       border-radius: 5px;
       font-size: 16px;
+      background-color: #f9f9f9;
+      width: 70%;
     }
 
     input[type="submit"] {
@@ -33,47 +56,175 @@
       border-radius: 5px;
       font-size: 16px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
 
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    /* Status Messages */
     p {
       margin-top: 20px;
-      color: #333;
+      font-size: 16px;
     }
 
     p.error {
-      color: red;
+      color: #ff4d4d;
     }
 
+    /* Divider */
     hr {
+      margin: 20px 0;
+      border: 0;
+      height: 1px;
+      background: #ccc;
+    }
+
+    /* Download Button */
+    input[type="submit"].download {
+      background-color: #008CBA;
+    }
+
+    input[type="submit"].download:hover {
+      background-color: #0077a3;
+    }
+
+    /* Run Process Button */
+    #processButton {
+      padding: 10px 20px;
+      background-color: #ff6f61;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
       margin-top: 20px;
     }
 
-    input[type="submit"].download {
-      background-color: #008CBA;
+    #processButton:hover {
+      background-color: #ff4a3d;
+    }
+
+    #processButton:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* Loading Spinner */
+    .button-loading {
+      position: relative;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .button-loading::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin-top: -10px;
+      margin-left: -10px;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Status Message */
+    .status-message {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .status-message.loading {
+      color: #008CBA;
+    }
+
+    .status-message.success {
+      color: #4CAF50;
+    }
+
+    .status-message.error {
+      color: #ff4d4d;
     }
   </style>
 </head>
 <body>
-  <h1>File Upload and Processing</h1>
-  <form method="post" enctype="multipart/form-data" action="/">
-    <input type="file" name="file" accept=".xlsx, .csv">
-    <input type="submit" value="Upload and Process">
-  </form>
-  
-  {% if result %}
-    <p>{{ result }}</p>
-  {% endif %}
-  
-  {% if error %}
-    <p class="error">{{ error }}</p>
-  {% endif %}
-
-  <hr>
-
-  {% if download_link %}
-    <form method="get" action="/download_data">
-      <input type="submit" class="download" value="Download Data">
+  <div class="container">
+    <h1>File Upload and Processing</h1>
+    <form method="post" enctype="multipart/form-data" action="/">
+      <input type="file" name="file" accept=".xlsx, .csv">
+      <input type="submit" value="Upload and Process">
     </form>
-  {% endif %}
+    
+    {% if result %}
+      <p>{{ result }}</p>
+    {% endif %}
+    
+    {% if error %}
+      <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <hr>
+
+    {% if download_link %}
+      <form method="get" action="/download_data">
+        <input type="submit" class="download" value="Download Data">
+      </form>
+    {% endif %}
+
+    <div class="status-message" id="statusMessage"></div>
+    <button id="processButton" onclick="runProcess()">Run Process</button>
+  </div>
+
+  <script>
+    async function runProcess() {
+      const button = document.getElementById('processButton');
+      const statusMessage = document.getElementById('statusMessage');
+
+      // Disable the button and show loading state
+      button.classList.add('button-loading');
+      button.disabled = true;
+      statusMessage.textContent = "Processing...";
+      statusMessage.className = "status-message loading";
+
+      try {
+        // Call the backend endpoint to run the process
+        const response = await fetch('/run_process', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+          statusMessage.textContent = data.message;
+          statusMessage.className = "status-message success";
+        } else {
+          statusMessage.textContent = data.message;
+          statusMessage.className = "status-message error";
+        }
+      } catch (error) {
+        statusMessage.textContent = "An error occurred. Please try again.";
+        statusMessage.className = "status-message error";
+      } finally {
+        // Re-enable the button
+        button.classList.remove('button-loading');
+        button.disabled = false;
+      }
+    }
+  </script>
 </body>
 </html>
