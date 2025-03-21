@@ -25,7 +25,9 @@ YOUTUBE_MAPPING={
   "Mondelez International": "Mondelez International",
   "Reliance Industries": "RelianceUpdates",
   "Tata Group": "TataCompanies",
-  "Unilever Global": "Unilever Global"
+  "Unilever Global": "Unilever Global",
+  'Aditya Birla Group': 'aditya-birla-group',
+  'Aditya Birla Group': 'aditya birla group',
 }
 
 
@@ -44,3 +46,20 @@ PHANTOM_BUSTER = [
                 "profileUrl", "timestamp", "postTimestamp", "videoUrl",
                 "sharedPostUrl"
             ]
+
+
+
+
+
+
+
+#####################DATABASE######################
+
+
+CONNECTION_URL="mongodb+srv://lalsharath511:Sharathbhagavan15192142@legal.mosm3f4.mongodb.net/"
+DATABASE_NAME="echo2"
+COLLECTION_POST="posts"
+COLLECTION_UPLOAD="uploaded_data"
+COLLECTION_KEYWORD="keyword_data"
+COLLECTION_DUPLICATE="duplicate_data"
+COLLECTION_METADATA="metadata"
