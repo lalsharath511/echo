@@ -1,12 +1,13 @@
 from pymongo import MongoClient
+from api.settings import CONNECTION_URL,DATABASE_NAME,COLLECTION_POST,COLLECTION_UPLOAD,COLLECTION_DUPLICATE,COLLECTION_METADATA
 from datetime import datetime
 from pymongo import errors
 import pytz
 
 class MongoDBConnector:
     def __init__(self):
-        self.connection_string = "mongodb+srv://lalsharath511:Sharathbhagavan15192142@legal.mosm3f4.mongodb.net/"
-        self.database_name = "echo"
+        self.connection_string = CONNECTION_URL
+        self.database_name = DATABASE_NAME
         self.client = MongoClient(self.connection_string)
         self.db = self.client[self.database_name]
         
@@ -31,12 +32,12 @@ class MongoDBConnector:
         }
 
         # Upload metadata to MongoDB
-        metadata_collection = self.db['metadata']  # Assuming 'metadata' is the collection name
+        metadata_collection = self.db[COLLECTION_METADATA]  # Assuming 'metadata' is the collection name
         metadata_id = metadata_collection.insert_one(metadata).inserted_id
         return metadata_id
     def upload_elt_to_mongo(self,data,filename):
-        collection = self.db["transform_data"]
-        duplicate_collection = self.db["duplicate_data"]
+        collection = self.db[COLLECTION_UPLOAD]
+        duplicate_collection = self.db[COLLECTION_DUPLICATE]
 
         # Create a unique index on the "Link" field (assuming "Link" is the unique field)
         collection.create_index("Link", unique=True)
@@ -66,23 +67,3 @@ class MongoDBConnector:
         except Exception as e:
             raise RuntimeError(f"Error closing MongoDB connection: {str(e)}")
 
-# Example usage:
-# if __name__ == '__main__':
-#     # try:
-#         # Replace with your MongoDB connection details
-#         connection_string = "your_mongodb_connection_string"
-#         database_name = "your_database_name"
-
-#         # Create an instance of MongoDBConnector
-#         mongo_connector = MongoDBConnector()
-        
-
-    #     # Your MongoDB operations here...
-
-    # except RuntimeError as e:
-    #     print(f"Error: {str(e)}")
-
-    # finally:
-    #     # Close the MongoDB connection in the finally block to ensure it gets closed even if an exception occurs
-    #     if 'mongo_connector' in locals():
-    #         mongo_connector.close_connection()
